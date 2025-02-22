@@ -1,0 +1,21 @@
+{
+    "tickets": [
+        {
+            "easy": [
+                "O’simlik hujayrasida boradigan jarayonlarni yozing"
+            ],
+            "medium": [
+                "Daraxtchil o‘simliklar poyasining anatomik tuzilishini tushuntiring?"
+            ],
+            "murakkab1": [
+                "Hosil qiluvchi to’qima vauning turlariga tariff bering"
+            ],
+            "murakkab2": [
+                "Botanika qanday bo‘limlarga ajratiladi"
+            ],
+            "hard": [
+                "O‘simliklarni o‘rganishda qanday usullardan foydalaniladi?"
+            ]
+        }
+    ]
+}

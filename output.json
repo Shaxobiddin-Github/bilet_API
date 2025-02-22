@@ -1,0 +1,39 @@
+{
+    "tickets": [
+        {
+            "easy": "Klostetium turkumiga xos xususiyatlar va ularni ko’payishini tushuntirib bering",
+            "medium": "Urug‘kurtak qanday tuzilishga ega va uni turlarini tushuntirib bering",
+            "murakkab1": "Hujayra  tarkibida kiruvchi fermentlar,vitaminlarni ni aamiyatini tushunturib bering",
+            "murakkab2": "G‘amlovchi, ajratuvchi, va ularning vazifasi,hujayrasining tuzilishi haqida tushuncha bering.",
+            "hard": "Botanikaning boshqa fanlar bilan aloqasi (Arestotel,Teofras,Pliniy,Dioskorid) tushuntirib bering"
+        },
+        {
+            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
+            "medium": "Gul qaysi qismlardan ibora",
+            "murakkab1": "O‘tkazuvchi to‘qimalar tuzilishi va vazifalarini tushuntiring.Bikollaterial boylam nima?",
+            "murakkab2": "G‘amlovchi, ajratuvchi, va ularning vazifasi,hujayrasining tuzilishi haqida tushuncha bering.",
+            "hard": "O’z-o’zidan changlanishning qanday xillari mavjud?"
+        },
+        {
+            "easy": "O‘simliklarning vegetativ ko‘payishi deb nimaga aytiladi",
+            "medium": "Matseratsiya,mitsilla,intussupensiya,appozitsiya ,plazmodesma,Perforatsiya tushunchalariga tariff bering",
+            "murakkab1": "O’simlik hujayrasining kimyoviy tarkibini tushuntirib bering",
+            "murakkab2": "Murtak xaltasining tuzilishi va hosil bo’lishi",
+            "hard": "Oddiy va murakkab barglarga tarif bering."
+        },
+        {
+            "easy": "Pirofit suvo’tlar bo’limini ko‘payish xususiyatlarini va sistematikasini tushuntirib bering",
+            "medium": "Endospermsiz urug’larning tuzilishini tushuntirib bering",
+            "murakkab1": "Golji aparati,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "murakkab2": "Simpodial to’pgullar nima va uning xillari qanday",
+            "hard": "Botanika faniga  kirish"
+        },
+        {
+            "easy": "Hujayrani o’rganish usullarini yozing",
+            "medium": "Hujayrani mitoz bo’linishiga tariff bering",
+            "murakkab1": "Botanika fanining rivojlanish tarixi(Navashin,Sukachev,Vavilov,Korovin) ni yozing",
+            "murakkab2": "O’simliklarni urug’ yordamida ko’payishi",
+            "hard": "Hujayrani katta kichikligi  bo’yicha qanday xillarga bo’linadi"
+        }
+    ]
+}
