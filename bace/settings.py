@@ -30,7 +30,9 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "testserver",  # Test muhit uchun qo'shiladi
+    "bilet-api.onrender.com",  # Render serveri uchun
 ]
+
 
 
 # Application definition

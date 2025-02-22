@@ -1,3 +1,12 @@
+import sys
+
+if sys.platform == "win32":
+    import pythoncom  # Faqat Windows uchun
+
+from django.shortcuts import render
+from django.http import JsonResponse
+
+
 import os
 import json
 from rest_framework.views import APIView
