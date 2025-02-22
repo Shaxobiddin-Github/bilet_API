@@ -34,6 +34,14 @@ ALLOWED_HOSTS = [
 ]
 
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': None,  # Login talab qilinmaydi
+    'USE_SESSION_AUTH': False,      # Django sessiyasi kerak emas
+    'LOGIN_URL': None,
+    'LOGOUT_URL': None,
+}
+
+
 
 # Application definition
 
