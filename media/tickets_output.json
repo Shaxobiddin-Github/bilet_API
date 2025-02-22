@@ -2,19 +2,36 @@
     "tickets": [
         {
             "easy": [
-                "O’simlik hujayrasida boradigan jarayonlarni yozing"
+                "Androtsey deb nimaga aytiladi va qanday tuzilishga ega"
             ],
             "medium": [
                 "Daraxtchil o‘simliklar poyasining anatomik tuzilishini tushuntiring?"
             ],
             "murakkab1": [
-                "Hosil qiluvchi to’qima vauning turlariga tariff bering"
-            ],
-            "murakkab2": [
                 "Botanika qanday bo‘limlarga ajratiladi"
             ],
+            "murakkab2": [
+                "Tuban o’simliklarda jinsiy ko’payish jarayoni qanday amalga oshadi"
+            ],
             "hard": [
-                "O‘simliklarni o‘rganishda qanday usullardan foydalaniladi?"
+                "Androtsey deb nimaga aytiladi va qanday tuzilishga ega"
+            ]
+        },
+        {
+            "easy": [
+                "Barglarda sodir bo;ladigan jarayonlarni tushuntiring"
+            ],
+            "medium": [
+                "Meva qatini tuzilishi ho’l va quruq meva tiplari to’g’risidagitushunchangizni yozing"
+            ],
+            "murakkab1": [
+                "Shakli o’zgargan(metamorfozlashgan) novdalar"
+            ],
+            "murakkab2": [
+                "Ildiz metamorfazalari nima va unga misollar keltiring"
+            ],
+            "hard": [
+                "Barglarda sodir bo;ladigan jarayonlarni tushuntiring"
             ]
         }
     ]
