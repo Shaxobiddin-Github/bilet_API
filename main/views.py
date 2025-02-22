@@ -14,7 +14,6 @@ from rest_framework.response import Response
 from docx import Document
 from docx2pdf import convert
 from PyPDF2 import PdfMerger
-import pythoncom  # COM uchun kerakli modul
 import random
 from .models import File
 from django.conf import settings
