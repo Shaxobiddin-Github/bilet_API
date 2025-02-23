@@ -29,58 +29,63 @@ from rest_framework.permissions import IsAuthenticated
 
 
 
+import os
+import json
+from django.conf import settings
+from django.urls import reverse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser
+from django.core.files.storage import default_storage
+from openpyxl import load_workbook
+from django.test import Client
+from .serializers import FileUploadSerializer
+
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
-
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        file = request.FILES.get('file')
-        if not file:
-            return Response({"error": "Fayl topilmadi!"}, status=400)
+        serializer = FileUploadSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
 
-        # Faylni saqlash
-        file_path = os.path.join(settings.MEDIA_ROOT, file.name)
-        with open(file_path, 'wb+') as destination:
-            for chunk in file.chunks():
-                destination.write(chunk)
+        file = serializer.validated_data['file']
+        column_easy = serializer.validated_data['column_easy'] - 1
+        column_medium = serializer.validated_data['column_medium'] - 1
+        column_murakkab1 = serializer.validated_data['column_murakkab1'] - 1
+        column_murakkab2 = serializer.validated_data['column_murakkab2'] - 1
+        column_hard = serializer.validated_data['column_hard'] - 1
+        num_tickets = serializer.validated_data['num_tickets']
 
-        # Foydalanuvchidan ustun indekslarini olish (1=B, 2=C, va hokazo)
+        # Faylni media papkaga saqlash
+        file_path = default_storage.save(f"uploads/{file.name}", file)
+        full_path = os.path.join(settings.MEDIA_ROOT, file_path)
+
         try:
-            column_easy = int(request.data.get('column_easy', 2)) - 1  # B ustuni standart (2)
-            column_medium = int(request.data.get('column_medium', 3)) - 1  # C ustuni standart (3)
-            column_murakkab1 = int(request.data.get('column_murakkab1', 4)) - 1  # D ustuni standart (4)
-            column_murakkab2 = int(request.data.get('column_murakkab2', 5)) - 1  # E ustuni standart (5)
-            column_hard = int(request.data.get('column_hard', 6)) - 1  # F ustuni standart (6)
-        except (ValueError, TypeError):
-            return Response({"error": "Ustun indekslari to'g'ri son bo'lishi kerak!"}, status=400)
-
-        # Excel faylni o‘qish
-        try:
-            workbook = load_workbook(file_path)
+            workbook = load_workbook(full_path)
             sheet = workbook.active
 
-            # Savollarni darajalar bo‘yicha ajratish
             questions_easy = []
             questions_medium = []
             questions_murakkab1 = []
             questions_murakkab2 = []
             questions_hard = []
 
-            # 1-qator va A ustunini tashlab ketish uchun min_row=2 dan boshlaymiz
             for row in sheet.iter_rows(min_row=2, min_col=2, values_only=True):
                 if len(row) > max(column_easy, column_medium, column_murakkab1, column_murakkab2, column_hard):
-                    if column_easy >= 0 and row[column_easy] is not None:
+                    if column_easy >= 0 and row[column_easy]:
                         questions_easy.append(row[column_easy])
-                    if column_medium >= 0 and row[column_medium] is not None:
+                    if column_medium >= 0 and row[column_medium]:
                         questions_medium.append(row[column_medium])
-                    if column_murakkab1 >= 0 and row[column_murakkab1] is not None:
+                    if column_murakkab1 >= 0 and row[column_murakkab1]:
                         questions_murakkab1.append(row[column_murakkab1])
-                    if column_murakkab2 >= 0 and row[column_murakkab2] is not None:
+                    if column_murakkab2 >= 0 and row[column_murakkab2]:
                         questions_murakkab2.append(row[column_murakkab2])
-                    if column_hard >= 0 and row[column_hard] is not None:
+                    if column_hard >= 0 and row[column_hard]:
                         questions_hard.append(row[column_hard])
 
-            # JSON fayllarga saqlash
             json_files = {
                 "easy": questions_easy,
                 "medium": questions_medium,
@@ -97,38 +102,24 @@ class UploadQuestions(APIView):
         except Exception as e:
             return Response({"error": f"Faylni o'qishda xatolik: {str(e)}"}, status=500)
 
-        # Biletlar va savollar sonini default holatda belgilash
-        try:
-            num_tickets = int(request.data.get('num_tickets', 1))  # Default 5 ta bilet
-        except (ValueError, TypeError):
-            return Response({"error": "Biletlar soni to'g'ri son bo'lishi kerak!"}, status=400)
-
-        if num_tickets < 1:
-            return Response({"error": "Biletlar soni kamida 1 ta bo'lishi kerak!"}, status=400)
-        num_easy = 1     # Default Easy’dan 1 ta
-        num_medium = 1   # Default Medium’dan 1 ta
-        num_murakkab1 = 1  # Default Murakkab1’dan 1 ta
-        num_murakkab2 = 1  # Default Murakkab2’dan 1 ta
-        num_hard = 1     # Default Hard’dan 1 ta
-
-        # Avtomatik ravishda biletlarni yaratish
+        # Bilet yaratish uchun API chaqirish
         client = Client()
         generate_url = reverse('generate_tickets')
         client.post(generate_url, data={
             "num_tickets": num_tickets,
-            "num_easy": num_easy,
-            "num_medium": num_medium,
-            "num_murakkab1": num_murakkab1,
-            "num_murakkab2": num_murakkab2,
-            "num_hard": num_hard
+            "num_easy": 1,
+            "num_medium": 1,
+            "num_murakkab1": 1,
+            "num_murakkab2": 1,
+            "num_hard": 1
         }, content_type="application/json")
 
-        # Eksport qilish
+        # PDF eksport qilish
         export_url = reverse('export_tickets')
         client.get(export_url)
 
         return Response({
-            "message": f"Savollar yuklandi, {num_tickets} ta biletlar yaratildi va PDFga eksport qilindi!",
+            "message": f"Savollar yuklandi, {num_tickets} ta bilet yaratildi va PDF eksport qilindi!",
             "files": [
                 f"{settings.MEDIA_URL}easy_questions.json",
                 f"{settings.MEDIA_URL}medium_questions.json",

@@ -2,36 +2,36 @@
     "tickets": [
         {
             "easy": [
-                "Androtsey deb nimaga aytiladi va qanday tuzilishga ega"
+                "Quruq meva va  quruq meva  tiplariga misollar keltiring"
             ],
             "medium": [
-                "Daraxtchil o‘simliklar poyasining anatomik tuzilishini tushuntiring?"
+                "Tarkibida to’playdigan zaxira moddalar tarkibiga ko’ra urug’lar necha xil bo’ladi"
             ],
             "murakkab1": [
-                "Botanika qanday bo‘limlarga ajratiladi"
+                "Hujayra shirasi va uning tarkibini tushuntirib bering"
             ],
             "murakkab2": [
-                "Tuban o’simliklarda jinsiy ko’payish jarayoni qanday amalga oshadi"
+                "Stel nazariyasini yoritib bering"
             ],
             "hard": [
-                "Androtsey deb nimaga aytiladi va qanday tuzilishga ega"
+                "Gul formulasi va diagrammasi"
             ]
         },
         {
             "easy": [
-                "Barglarda sodir bo;ladigan jarayonlarni tushuntiring"
+                "Oddiy va murakkab to‘qimalar deb qanday to‘qimalarga aytiladi?Konsentrik boylam nima?"
             ],
             "medium": [
-                "Meva qatini tuzilishi ho’l va quruq meva tiplari to’g’risidagitushunchangizni yozing"
+                "Ildizning o‘sishi va rivojlanishi qanday omillarga bog‘liq?"
             ],
             "murakkab1": [
-                "Shakli o’zgargan(metamorfozlashgan) novdalar"
+                "Hujayra kashf ettilishining tarixi ni yozing"
             ],
             "murakkab2": [
-                "Ildiz metamorfazalari nima va unga misollar keltiring"
+                "Tarkibida to’playdigan zaxira moddalar tarkibiga ko’ra urug’lar necha xil bo’ladi"
             ],
             "hard": [
-                "Barglarda sodir bo;ladigan jarayonlarni tushuntiring"
+                "Yon kurtaklarning qanday xillari bor?"
             ]
         }
     ]
