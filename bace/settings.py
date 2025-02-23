@@ -35,11 +35,18 @@ ALLOWED_HOSTS = [
 
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': None,  # Login talab qilinmaydi
-    'USE_SESSION_AUTH': False,      # Django sessiyasi kerak emas
-    'LOGIN_URL': None,
-    'LOGOUT_URL': None,
+    'DEFAULT_GENERATOR_CLASS': 'drf_yasg.generators.OpenAPISchemaGenerator',
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
 }
+
 
 
 
