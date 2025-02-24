@@ -1,3 +1,5 @@
+from email.feedparser import FeedParser
+import logging
 import sys
 
 if sys.platform == "win32":
@@ -21,36 +23,101 @@ from rest_framework.parsers import MultiPartParser
 from openpyxl import load_workbook
 from django.test import Client  # Test clientdan foydalanamiz
 from django.urls import reverse
-from rest_framework.permissions import IsAuthenticated
-
-
-
-
-
-
-
-import os
-import json
-from django.conf import settings
-from django.urls import reverse
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from django.core.files.storage import default_storage
-from openpyxl import load_workbook
-from django.test import Client
 from .serializers import FileUploadSerializer
+from rest_framework.viewsets import ModelViewSet
+from .models import SamDUkf
+from .serializers import SamDUkfSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+
+
+
+
+
+class SamDUkfViewSet(ModelViewSet):
+    queryset = SamDUkf.objects.all()
+    serializer_class = SamDUkfSerializer
+
+
+
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
+    @swagger_auto_schema(
+        operation_description="Faylni yuklash va bilet yaratish uchun POST so'rovi.",
+        manual_parameters=[
+            openapi.Parameter(
+                'file',
+                openapi.IN_FORM,
+                description="Excel faylini yuklash",
+                type=openapi.TYPE_FILE,
+                required=True
+            ),
+            openapi.Parameter(
+                'column_easy',
+                openapi.IN_FORM,
+                description="Oson savollar ustunining raqami",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'column_medium',
+                openapi.IN_FORM,
+                description="O'rta darajadagi savollar ustunining raqami",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'column_murakkab1',
+                openapi.IN_FORM,
+                description="Murakkab 1 savollar ustunining raqami",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'column_murakkab2',
+                openapi.IN_FORM,
+                description="Murakkab 2 savollar ustunining raqami",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'column_hard',
+                openapi.IN_FORM,
+                description="Qiyin savollar ustunining raqami",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'num_tickets',
+                openapi.IN_FORM,
+                description="Yaratiladigan biletlar soni",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            200: "Savollar muvaffaqiyatli yuklandi va bilet yaratildi!",
+            400: "So'rovda xatoliklar mavjud",
+            500: "Server xatosi",
+            501: "Fileni uqishda muommo bor kodingga qara 😂"
+        }
+    )
     def post(self, request):
         serializer = FileUploadSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=400)
-
+        
         file = serializer.validated_data['file']
         column_easy = serializer.validated_data['column_easy'] - 1
         column_medium = serializer.validated_data['column_medium'] - 1
@@ -58,21 +125,16 @@ class UploadQuestions(APIView):
         column_murakkab2 = serializer.validated_data['column_murakkab2'] - 1
         column_hard = serializer.validated_data['column_hard'] - 1
         num_tickets = serializer.validated_data['num_tickets']
-
-        # Faylni media papkaga saqlash
         file_path = default_storage.save(f"uploads/{file.name}", file)
         full_path = os.path.join(settings.MEDIA_ROOT, file_path)
-
         try:
             workbook = load_workbook(full_path)
             sheet = workbook.active
-
             questions_easy = []
             questions_medium = []
             questions_murakkab1 = []
             questions_murakkab2 = []
             questions_hard = []
-
             for row in sheet.iter_rows(min_row=2, min_col=2, values_only=True):
                 if len(row) > max(column_easy, column_medium, column_murakkab1, column_murakkab2, column_hard):
                     if column_easy >= 0 and row[column_easy]:
@@ -85,7 +147,6 @@ class UploadQuestions(APIView):
                         questions_murakkab2.append(row[column_murakkab2])
                     if column_hard >= 0 and row[column_hard]:
                         questions_hard.append(row[column_hard])
-
             json_files = {
                 "easy": questions_easy,
                 "medium": questions_medium,
@@ -93,16 +154,12 @@ class UploadQuestions(APIView):
                 "murakkab2": questions_murakkab2,
                 "hard": questions_hard,
             }
-
             for difficulty, questions in json_files.items():
                 output_path = os.path.join(settings.MEDIA_ROOT, f"{difficulty}_questions.json")
                 with open(output_path, "w", encoding="utf-8") as json_file:
                     json.dump(questions, json_file, ensure_ascii=False, indent=4)
-
         except Exception as e:
             return Response({"error": f"Faylni o'qishda xatolik: {str(e)}"}, status=500)
-
-        # Bilet yaratish uchun API chaqirish
         client = Client()
         generate_url = reverse('generate_tickets')
         client.post(generate_url, data={
@@ -113,11 +170,8 @@ class UploadQuestions(APIView):
             "num_murakkab2": 1,
             "num_hard": 1
         }, content_type="application/json")
-
-        # PDF eksport qilish
         export_url = reverse('export_tickets')
         client.get(export_url)
-
         return Response({
             "message": f"Savollar yuklandi, {num_tickets} ta bilet yaratildi va PDF eksport qilindi!",
             "files": [
@@ -128,17 +182,18 @@ class UploadQuestions(APIView):
                 f"{settings.MEDIA_URL}hard_questions.json",
             ]
         })
-
-
-
-
-
-
     
 class GenerateTickets(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         # Foydalanuvchidan kelgan ma'lumotlardan nechtadan bilet yaratish kerakligini olish
         num_tickets = request.data.get('num_tickets', 1)  # Nechta bilet yaratish, standart 1 ta
+        if num_tickets is None:
+            return Response({"error": "num_tickets is required"}, status=400)
+        try:
+            num_tickets = int(num_tickets)
+        except (ValueError, TypeError):
+            return Response({"error": "num_tickets must be an integer"}, status=400)
 
         # Har bir darajadan nechtadan savol olish kerakligini olish
         num_easy = request.data.get('num_easy', 1)
@@ -239,6 +294,7 @@ class GenerateTickets(APIView):
 
 
 class ExportTickets(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         # COM ob'ektini boshlash
         pythoncom.CoInitialize()
