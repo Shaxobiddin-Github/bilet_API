@@ -16,14 +16,11 @@ import random
 from django.conf import settings
 from rest_framework.parsers import MultiPartParser
 from openpyxl import load_workbook
-from django.test import Client 
-from django.urls import reverse
 from rest_framework.permissions import AllowAny
 from docx.shared import Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
-from django.core.files.storage import default_storage
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import SamDUkf, File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
 from .serializers import (
@@ -342,7 +339,7 @@ class UploadQuestions(APIView):
             return Response({"error": f"Faylni o'qishda xatolik: {str(e)}"}, status=500)
 
         # 🎟 Biletlarni yaratish uchun API'ga so‘rov yuborish
-        base_url = "http://127.0.0.1:8000"  # O'zingizning API manzilingizni qo'shing
+        base_url = "https://bilet-api.onrender.com/"  # O'zingizning API manzilingizni qo'shing
         generate_url = f"{base_url}/api/generate_tickets/"
         export_url = f"{base_url}/api/export_tickets/"
 
