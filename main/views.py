@@ -1,4 +1,5 @@
 
+
 import sys
 
 if sys.platform == "win32":
@@ -15,14 +16,23 @@ import random
 from django.conf import settings
 from rest_framework.parsers import MultiPartParser
 from openpyxl import load_workbook
-from django.test import Client  # Test clientdan foydalanamiz
+from django.test import Client 
 from django.urls import reverse
 from rest_framework.permissions import AllowAny
+from docx.shared import Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
 from django.core.files.storage import default_storage
-# from .serializers import FileUploadSerializer
-from .models import SamDUkf
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from .models import SamDUkf, File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
+from .serializers import (
+    SamDUkfSerializer, FileSerializer, UquvYiliSerializer, BosqichSerializer,
+    TalimYunalishiSerializer, SemestrSerializer, FanSerializer
+)
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from drf_yasg import openapi
 
 
 
@@ -31,62 +41,270 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 
+class FileViewSet(ModelViewSet):
+    queryset = File.objects.all()
+    serializer_class = FileSerializer
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticated]  # AllowAny o‘chirildi
+
+    @swagger_auto_schema(
+        operation_description="Fayl yuklash",
+        manual_parameters=[
+            openapi.Parameter('file', openapi.IN_FORM, type=openapi.TYPE_FILE, description='Yuklanadigan fayl', required=True),
+        ],
+        responses={
+            201: FileSerializer,
+            400: "Fayl yuklanmadi",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Fayllar ro'yxatini olish",
+        responses={
+            200: FileSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+# O'quv yili uchun API
 
 
+class UquvYiliViewSet(ModelViewSet):
+    queryset = Uquv_yili.objects.all()
+    serializer_class = UquvYiliSerializer
+    permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Yangi o'quv yili qo'shish",
+        request_body=UquvYiliSerializer,
+        responses={
+            201: UquvYiliSerializer,
+            400: "Xato so'rov",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="O'quv yillari ro'yxatini olish",
+        responses={
+            200: UquvYiliSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+
+class BosqichViewSet(ModelViewSet):
+    queryset = Bosqich.objects.all()
+    serializer_class = BosqichSerializer
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Yangi bosqich qo'shish",
+        request_body=BosqichSerializer,
+        responses={
+            201: BosqichSerializer,
+            400: "Xato so'rov",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Bosqichlar ro'yxatini olish",
+        responses={
+            200: BosqichSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+class TalimYunalishiViewSet(ModelViewSet):
+    queryset = Talim_yunalishi.objects.all()
+    serializer_class = TalimYunalishiSerializer
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Yangi ta'lim yo'nalishi qo'shish",
+        request_body=TalimYunalishiSerializer,
+        responses={
+            201: TalimYunalishiSerializer,
+            400: "Xato so'rov",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Ta'lim yo'nalishlari ro'yxatini olish",
+        responses={
+            200: TalimYunalishiSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+class SemestrViewSet(ModelViewSet):
+    queryset = Semestr.objects.all()
+    serializer_class = SemestrSerializer
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Yangi semestr qo'shish",
+        request_body=SemestrSerializer,
+        responses={
+            201: SemestrSerializer,
+            400: "Xato so'rov",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Semestrlar ro'yxatini olish",
+        responses={
+            200: SemestrSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+class FanViewSet(ModelViewSet):
+    queryset = Fan.objects.all()
+    serializer_class = FanSerializer
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Yangi fan qo'shish",
+        request_body=FanSerializer,
+        responses={
+            201: FanSerializer,
+            400: "Xato so'rov",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Fanlar ro'yxatini olish",
+        responses={
+            200: FanSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+class SamDUkfViewSet(ModelViewSet):
+    queryset = SamDUkf.objects.all()
+    serializer_class = SamDUkfSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    @swagger_auto_schema(
+        operation_description="Yangi SamDUkf yozuvi qo'shish",
+        manual_parameters=[
+            openapi.Parameter('uquv_yili_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='O‘quv yili ID', required=True),
+            openapi.Parameter('semestr_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Semestr ID', required=True),
+            openapi.Parameter('fan_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Fan ID', required=True),
+            openapi.Parameter('bosqich_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Bosqich ID', required=True),
+            openapi.Parameter('talim_yunalishi_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Ta‘lim yo‘nalishi ID', required=True),
+            openapi.Parameter('file_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Fayl ID', required=True),
+            openapi.Parameter('biletlar_soni', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Biletlar soni'),
+            openapi.Parameter('oson_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Oson savollar soni (1-5)'),
+            openapi.Parameter('urtacha_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='O‘rtacha savollar soni (1-5)'),
+            openapi.Parameter('murakkab1', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Murakkab1 savollar soni (1-5)'),
+            openapi.Parameter('murakkab2', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Murakkab2 savollar soni (1-5)'),
+            openapi.Parameter('qiyin_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Qiyin savollar soni (1-5)'),
+        ],
+        responses={
+            201: SamDUkfSerializer,
+            400: "Xato so'rov",
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=201)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    @swagger_auto_schema(
+        operation_description="SamDUkf yozuvlari ro'yxatini olish",
+        responses={
+            200: SamDUkfSerializer(many=True),
+            401: "Autentifikatsiya talab qilinadi"
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        operation_description="Faylni yuklash va savollarni JSON fayllarga saqlash uchun POST so'rovi.",
-        responses={
-            200: "Savollar muvaffaqiyatli yuklandi!",
-            400: "So'rovda xatoliklar mavjud",
-            500: "Server xatosi"
-        }
-    )
     def post(self, request):
+        print("Request user:", request.user)
+        print("Request auth:", request.auth)
+
         try:
-            latest_entry = SamDUkf.objects.latest('id')  # Oxirgi ma'lumotni olish
+            latest_entry = SamDUkf.objects.latest('id')
         except SamDUkf.DoesNotExist:
             return Response({"error": "Bazada hech qanday ma'lumot yo'q."}, status=400)
 
-        file = latest_entry.file.file
-        num_tickets = latest_entry.biletlar_soni
-        num_easy = latest_entry.oson_savol  # 1-5 oralig'ida
-        num_medium = latest_entry.urtacha_savol  # 1-5 oralig'ida
-        num_murakkab1 = latest_entry.murakkab1  # 1-5 oralig'ida
-        num_murakkab2 = latest_entry.murakkab2  # 1-5 oralig'ida
-        num_hard = latest_entry.qiyin_savol  # 1-5 oralig'ida
+        # Faylni bazadan olish va uning to'liq yo'lini aniqlash
+        file = latest_entry.file.file  # FileField obyekti
+        full_path = os.path.join(settings.MEDIA_ROOT, file.name)  # Faylning to'liq yo'li
+        print("File path:", full_path)  # Debug uchun
 
-        # Har bir daraja uchun 1-5 oralig'ini tekshirish
+        # Fayl mavjudligini tekshirish
+        if not os.path.exists(full_path):
+            return Response({"error": f"Fayl topilmadi: {full_path}"}, status=400)
+
+        num_tickets = latest_entry.biletlar_soni
+        num_easy = latest_entry.oson_savol
+        num_medium = latest_entry.urtacha_savol
+        num_murakkab1 = latest_entry.murakkab1
+        num_murakkab2 = latest_entry.murakkab2
+        num_hard = latest_entry.qiyin_savol
+
         for num, name in [(num_easy, "oson"), (num_medium, "o'rtacha"), (num_murakkab1, "murakkab1"), 
                           (num_murakkab2, "murakkab2"), (num_hard, "qiyin")]:
             if not (1 <= num <= 5):
                 return Response({"error": f"{name} savol soni 1 dan 5 gacha bo'lishi kerak!"}, status=400)
 
-        file_path = default_storage.save(f"uploads/{file.name}", file)
-        full_path = os.path.join(settings.MEDIA_ROOT, file_path)
-
         try:
-            workbook = load_workbook(full_path)
+            workbook = load_workbook(full_path)  # To'g'ridan-to'g'ri mavjud faylni o'qish
             sheet = workbook.active
-            
-            # Ustunlarni 1-5 ga moslashtirish (B=1, C=2, D=3, E=4, F=5)
-            column_map = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}  # Excelda B=1, C=2, ..., F=5
+            column_map = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
             questions_easy = []
             questions_medium = []
             questions_murakkab1 = []
             questions_murakkab2 = []
             questions_hard = []
 
-            # Har bir qatorni o'qish
             for row in sheet.iter_rows(min_row=2, min_col=1, values_only=True):
-                if len(row) >= 5:  # Kamida 5 ustun bo'lishi kerak (B-F)
+                if len(row) >= 5:
                     if num_easy and row[column_map[num_easy]]:
                         questions_easy.append(row[column_map[num_easy]])
                     if num_medium and row[column_map[num_medium]]:
@@ -105,31 +323,41 @@ class UploadQuestions(APIView):
                 "murakkab2": questions_murakkab2,
                 "hard": questions_hard,
             }
-            
-            # JSON fayllarga saqlash
+
             for difficulty, questions in json_files.items():
                 output_path = os.path.join(settings.MEDIA_ROOT, f"{difficulty}_questions.json")
                 with open(output_path, "w", encoding="utf-8") as json_file:
                     json.dump(questions, json_file, ensure_ascii=False, indent=4)
-        
+
         except Exception as e:
             return Response({"error": f"Faylni o'qishda xatolik: {str(e)}"}, status=500)
-        
-        # Biletlar generatsiyasini boshlash
+
+        # /api/generate/ ga so'rov
         client = Client()
         generate_url = reverse('generate_tickets')
-        client.post(generate_url, data={
-            "num_tickets": num_tickets,
-            "num_easy": num_easy,
-            "num_medium": num_medium,
-            "num_murakkab1": num_murakkab1,
-            "num_murakkab2": num_murakkab2,
-            "num_hard": num_hard
-        }, content_type="application/json")
-        
+        response = client.post(
+            generate_url,
+            data={
+                "num_tickets": num_tickets,
+                "num_easy": num_easy,
+                "num_medium": num_medium,
+                "num_murakkab1": num_murakkab1,
+                "num_murakkab2": num_murakkab2,
+                "num_hard": num_hard
+            },
+            content_type="application/json"
+        )
+        print("Generate response:", response.status_code, response.content)
+
+        if response.status_code != 200:
+            return Response({"error": f"GenerateTickets xatosi: {response.content}"}, status=response.status_code)
+
         export_url = reverse('export_tickets')
-        client.get(export_url)
-        
+        export_response = client.get(export_url)
+
+        if export_response.status_code != 200:
+            return Response({"error": f"ExportTickets xatosi: {export_response.content}"}, status=export_response.status_code)
+
         return Response({
             "message": f"Savollar yuklandi va {num_tickets} ta bilet yaratildi!",
             "files": [
@@ -141,8 +369,10 @@ class UploadQuestions(APIView):
             ]
         })
 
+
 class GenerateTickets(APIView):
     permission_classes = [AllowAny]
+    
 
     def post(self, request):
         # Biletlar sonini olish
@@ -217,11 +447,11 @@ class GenerateTickets(APIView):
         })
 
 
-from docx.shared import Pt
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+
 
 class ExportTickets(APIView):
     permission_classes = [AllowAny]
+    
 
     def get(self, request):
         # COM ob'ektini boshlash

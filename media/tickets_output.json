@@ -1,11 +1,39 @@
 {
     "tickets": [
         {
-            "easy": "Partenogenez nima?",
-            "medium": "Botanika fanining o‘rganadigan predmeti nima?Turgor va plazmoliz nima?",
-            "murakkab1": "Vakuola,uning tuzilishi ,turlari va vazifasini tushuntirib bering,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "easy": "Botanika fanining rivojlanish tarixi( Beruniy,M.Koshg’ariy,Z.M Bobur,Sezalpin)ni yozing",
+            "medium": "Tuban o’simliklarda jinsiy ko’payish jarayoni qanday amalga oshadi",
+            "murakkab1": "Qanaqa gulg‘o‘rg‘oni turlarini bilasiz",
+            "murakkab2": "Barglarning novdalarda joylashishi",
+            "hard": "zignema tuzilishi va ko`payishini bayon qiling"
+        },
+        {
+            "easy": "To‘qima deb nimaga aytiladi va uning klassifikatsiyas",
+            "medium": "Poyaning ichki tuzilishini tushuntirib bering",
+            "murakkab1": "Urug’ni unishi uchun zarur muhit qanday bo’lishi kerakligini misollar yordamida tushuntiring",
             "murakkab2": "Qoplovchi to‘qimalarning qanday xillari mavjud va vazifasi?",
-            "hard": "To‘qima deb nimaga aytiladi va uning klassifikatsiyas"
+            "hard": "zignema tuzilishi va ko`payishini bayon qiling"
+        },
+        {
+            "easy": "Tabiiy vegetativ ko‘payishning qanaqa turlari bo’ladi?",
+            "medium": "Chin mevalar ularni tuzilishi va xillarini  tushuntirib bering ",
+            "murakkab1": "O‘tkazuvchi to‘qimalar tuzilishi va vazifalarini tushuntiring.Bikollaterial boylam nima?",
+            "murakkab2": "Endospermli urug’larning tuzilishini tushuntirib bering",
+            "hard": "Kopulyatsiya qanday jarayon ekanligini tushuntiring"
+        },
+        {
+            "easy": "Hujayrani amitoz bo’linishiga tariff bering",
+            "medium": "Hosil qiluvchi to’qima vauning turlariga tariff bering",
+            "murakkab1": "Kriptofitsimonlar ajdodi - Cryptopsida Umumiy tuzilishi va rivojlanishini tushuntirib bering.",
+            "murakkab2": "O’simlik hujayrasining tuzilishi,qismlari ni yozing",
+            "hard": "Meva va urug’larni tarqalishini tushuntirib bering"
+        },
+        {
+            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
+            "medium": "Laminariyaning klassifikasiyasini yozib bering (bulim, sinf, tartib, turkumlar, tallom tuzilishi,usish joyi, jinsiz va jinsiy kupayishi, nasllar gallanishi, yadro fazalarning gallanishi, axamiyati).",
+            "murakkab1": "Hujayra po’stining ikkilamchi o’zgarishini tushuntirib bering",
+            "murakkab2": "Botanika fanining rivojlanish tarixi(J.Rey,R.Guk,K.LenniyVolf ,Gyote) ni yozing",
+            "hard": "Ko‘k-yashil suvo‘ttoifalarining tabiatda tarqalishini bayon qiling"
         }
     ]
 }
