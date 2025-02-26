@@ -1,21 +1,44 @@
 from rest_framework import serializers
-from .models import SamDUkf
+from .models import SamDUkf, File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
 
-class FileUploadSerializer(serializers.Serializer):
-    file = serializers.FileField()
-    column_easy = serializers.IntegerField(default=2, min_value=1, required=False)
-    column_medium = serializers.IntegerField(default=3, min_value=1, required=False)
-    column_murakkab1 = serializers.IntegerField(default=4, min_value=1, required=False)
-    column_murakkab2 = serializers.IntegerField(default=5, min_value=1, required=False)
-    column_hard = serializers.IntegerField(default=6, min_value=1, required=False)
-    num_tickets = serializers.IntegerField(min_value=1, required=True)
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = File
+        fields = '__all__'
 
-    
+class UquvYiliSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Uquv_yili
+        fields = '__all__'
 
+class BosqichSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bosqich
+        fields = '__all__'
 
+class TalimYunalishiSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Talim_yunalishi
+        fields = '__all__'
 
+class SemestrSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Semestr
+        fields = '__all__'
+
+class FanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fan
+        fields = '__all__'
 
 class SamDUkfSerializer(serializers.ModelSerializer):
+    uquv_yili = UquvYiliSerializer()
+    semestr = SemestrSerializer()
+    fan = FanSerializer()
+    bosqich = BosqichSerializer()
+    talim_yunalishi = TalimYunalishiSerializer()
+    file = FileSerializer()
+
     class Meta:
         model = SamDUkf
         fields = '__all__'

@@ -1,21 +1,11 @@
 {
     "tickets": [
         {
-            "easy": [
-                "Pirofit suvo’tlar bo’limini ko‘payish xususiyatlarini va sistematikasini tushuntirib bering"
-            ],
-            "medium": [
-                "Novdada, barg va kurtaklar qanday joylashgan"
-            ],
-            "murakkab1": [
-                "Quruq meva va  quruq meva  tiplariga misollar keltiring"
-            ],
-            "murakkab2": [
-                "Tarkibida to’playdigan zaxira moddalar tarkibiga ko’ra urug’lar necha xil bo’ladi"
-            ],
-            "hard": [
-                "Xaraning tuzilishi va ko`payishi bayon qiling."
-            ]
+            "easy": "Partenogenez nima?",
+            "medium": "Botanika fanining o‘rganadigan predmeti nima?Turgor va plazmoliz nima?",
+            "murakkab1": "Vakuola,uning tuzilishi ,turlari va vazifasini tushuntirib bering,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "murakkab2": "Qoplovchi to‘qimalarning qanday xillari mavjud va vazifasi?",
+            "hard": "To‘qima deb nimaga aytiladi va uning klassifikatsiyas"
         }
     ]
 }
