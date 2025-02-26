@@ -17,12 +17,12 @@ router.register(r'samdukf', SamDUkfViewSet)
 
 
 # samdukf_list = SamDUkfViewSet.as_view({'get': 'list', 'post': 'create'})
-
+app_name = "api"
 
 urlpatterns = [
     path('upload/', UploadQuestions.as_view(), name='upload_questions'),
-    path('generate/', GenerateTickets.as_view(), name='generate_tickets'),
-    path('export/', ExportTickets.as_view(), name='export_tickets'),
+    path('generate_tickets/', GenerateTickets.as_view(), name='generate_tickets'),
+    path('export_tickets/', ExportTickets.as_view(), name='export_tickets'),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),

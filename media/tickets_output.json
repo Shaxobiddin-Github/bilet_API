@@ -1,39 +1,39 @@
 {
     "tickets": [
         {
-            "easy": "Botanika fanining rivojlanish tarixi( Beruniy,M.Koshg’ariy,Z.M Bobur,Sezalpin)ni yozing",
-            "medium": "Tuban o’simliklarda jinsiy ko’payish jarayoni qanday amalga oshadi",
-            "murakkab1": "Qanaqa gulg‘o‘rg‘oni turlarini bilasiz",
-            "murakkab2": "Barglarning novdalarda joylashishi",
-            "hard": "zignema tuzilishi va ko`payishini bayon qiling"
+            "easy": "Ko‘k – yashil suvo‘ttoifalar bo‘limining hujayra tuzilishini yozing.(Perinoid,pektin,xro matofor,fikobilisoma)",
+            "medium": "Hujayrani kimyoviy tarkibi",
+            "murakkab1": "Evglena suvo‘tlar bo’limining sistematikasi,ko’payishi(tall omining tuzilishi, ko’payish xillari)tushuntirib berin",
+            "murakkab2": "Plastida,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "hard": "Xlorellaning ko’payishi va tuzilishini yozib bering"
         },
         {
-            "easy": "To‘qima deb nimaga aytiladi va uning klassifikatsiyas",
-            "medium": "Poyaning ichki tuzilishini tushuntirib bering",
-            "murakkab1": "Urug’ni unishi uchun zarur muhit qanday bo’lishi kerakligini misollar yordamida tushuntiring",
-            "murakkab2": "Qoplovchi to‘qimalarning qanday xillari mavjud va vazifasi?",
-            "hard": "zignema tuzilishi va ko`payishini bayon qiling"
-        },
-        {
-            "easy": "Tabiiy vegetativ ko‘payishning qanaqa turlari bo’ladi?",
-            "medium": "Chin mevalar ularni tuzilishi va xillarini  tushuntirib bering ",
-            "murakkab1": "O‘tkazuvchi to‘qimalar tuzilishi va vazifalarini tushuntiring.Bikollaterial boylam nima?",
-            "murakkab2": "Endospermli urug’larning tuzilishini tushuntirib bering",
+            "easy": "Mitoxondrya ,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "medium": "Meva va urug’larni zooxoriya tarqalishini tushuntirib bering",
+            "murakkab1": "Apomiksis va uning mohiyati",
+            "murakkab2": "Qanday to‘qimalar o‘zgaruvchan va doimiy bo‘ladi?Kollaterial boylam nima?",
             "hard": "Kopulyatsiya qanday jarayon ekanligini tushuntiring"
         },
         {
-            "easy": "Hujayrani amitoz bo’linishiga tariff bering",
-            "medium": "Hosil qiluvchi to’qima vauning turlariga tariff bering",
-            "murakkab1": "Kriptofitsimonlar ajdodi - Cryptopsida Umumiy tuzilishi va rivojlanishini tushuntirib bering.",
-            "murakkab2": "O’simlik hujayrasining tuzilishi,qismlari ni yozing",
-            "hard": "Meva va urug’larni tarqalishini tushuntirib bering"
+            "easy": "Meva va uni tuzilishini izohlab bering",
+            "medium": "mujotsiyaning tuzilishi va ko`payishini bayon qiling",
+            "murakkab1": "Meva va urug’larni ornitoxoriya tarqalishini tushuntirib bering",
+            "murakkab2": "Ho’l meva va ho’l meva tiplariga misollar keltiring",
+            "hard": "Murtak xaltasining tuzilishi va hosil bo’lishi"
         },
         {
-            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
-            "medium": "Laminariyaning klassifikasiyasini yozib bering (bulim, sinf, tartib, turkumlar, tallom tuzilishi,usish joyi, jinsiz va jinsiy kupayishi, nasllar gallanishi, yadro fazalarning gallanishi, axamiyati).",
-            "murakkab1": "Hujayra po’stining ikkilamchi o’zgarishini tushuntirib bering",
-            "murakkab2": "Botanika fanining rivojlanish tarixi(J.Rey,R.Guk,K.LenniyVolf ,Gyote) ni yozing",
-            "hard": "Ko‘k-yashil suvo‘ttoifalarining tabiatda tarqalishini bayon qiling"
+            "easy": " Ko‘k – yashil suvo‘ttoifalar bo‘limining hujayra tuzilishini yozing.(Perinoid,pektin,xro matofor,fikobilisoma)",
+            "medium": "Gulli o’simliklarda jinsiy ko’payish jarayoni qanday amalga oshadi",
+            "murakkab1": "Suv to’rchasi (Hydrodictyon) ning klassifikatsiyasi tushuntirib bering (bo’lim, ajdod, kabila, turkum va turi, tallomining tuzilishi, xujayra tuzilishi, kupayishi: jinsiy va jinsiz, senobial koloniya, poliedr).",
+            "murakkab2": "Plastida,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "hard": "Xlorellaning ko’payishi va tuzilishini yozib bering"
+        },
+        {
+            "easy": "Stel nazariyasini yoritib bering",
+            "medium": "Barglarni tomirlanishini tushuntiring",
+            "murakkab1": "Yer usti shakli o’zgargan novdalar",
+            "murakkab2": "Bir pallali o‘tchil o‘simliklar poyasi qanday tuzilishga ega",
+            "hard": "Hujayra  tarkibida kiruvchi fitogormonlar,antibiotiklar,fitonsidlar ni aamiyatini tushunturib bering"
         }
     ]
 }

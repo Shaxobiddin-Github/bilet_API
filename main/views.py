@@ -258,26 +258,35 @@ class SamDUkfViewSet(ModelViewSet):
 
 
 
+import os
+import json
+import requests
+from openpyxl import load_workbook
+from django.conf import settings
+from django.urls import reverse
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from .models import SamDUkf
+
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        print("Request user:", request.user)
-        print("Request auth:", request.auth)
+        
 
         try:
             latest_entry = SamDUkf.objects.latest('id')
         except SamDUkf.DoesNotExist:
             return Response({"error": "Bazada hech qanday ma'lumot yo'q."}, status=400)
 
-        # Faylni bazadan olish va uning to'liq yo'lini aniqlash
-        file = latest_entry.file.file  # FileField obyekti
-        full_path = os.path.join(settings.MEDIA_ROOT, file.name)  # Faylning to'liq yo'li
-        print("File path:", full_path)  # Debug uchun
+        file = latest_entry.file.file
+        full_path = os.path.join(settings.MEDIA_ROOT, file.name)
 
-        # Fayl mavjudligini tekshirish
         if not os.path.exists(full_path):
             return Response({"error": f"Fayl topilmadi: {full_path}"}, status=400)
 
@@ -294,7 +303,7 @@ class UploadQuestions(APIView):
                 return Response({"error": f"{name} savol soni 1 dan 5 gacha bo'lishi kerak!"}, status=400)
 
         try:
-            workbook = load_workbook(full_path)  # To'g'ridan-to'g'ri mavjud faylni o'qish
+            workbook = load_workbook(full_path)
             sheet = workbook.active
             column_map = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
             questions_easy = []
@@ -332,12 +341,18 @@ class UploadQuestions(APIView):
         except Exception as e:
             return Response({"error": f"Faylni o'qishda xatolik: {str(e)}"}, status=500)
 
-        # /api/generate/ ga so'rov
-        client = Client()
-        generate_url = reverse('generate_tickets')
-        response = client.post(
+        # 🎟 Biletlarni yaratish uchun API'ga so‘rov yuborish
+        base_url = "http://127.0.0.1:8000"  # O'zingizning API manzilingizni qo'shing
+        generate_url = f"{base_url}/api/generate_tickets/"
+        export_url = f"{base_url}/api/export_tickets/"
+
+        headers = {
+            "Authorization": f"Bearer {request.auth}"  # JWT tokenni qo‘shish
+        }
+
+        response = requests.post(
             generate_url,
-            data={
+            json={
                 "num_tickets": num_tickets,
                 "num_easy": num_easy,
                 "num_medium": num_medium,
@@ -345,18 +360,18 @@ class UploadQuestions(APIView):
                 "num_murakkab2": num_murakkab2,
                 "num_hard": num_hard
             },
-            content_type="application/json"
+            headers=headers
         )
-        print("Generate response:", response.status_code, response.content)
+
+        
 
         if response.status_code != 200:
-            return Response({"error": f"GenerateTickets xatosi: {response.content}"}, status=response.status_code)
+            return Response({"error": f"GenerateTickets xatosi: {response.text}"}, status=response.status_code)
 
-        export_url = reverse('export_tickets')
-        export_response = client.get(export_url)
+        export_response = requests.get(export_url, headers=headers)
 
         if export_response.status_code != 200:
-            return Response({"error": f"ExportTickets xatosi: {export_response.content}"}, status=export_response.status_code)
+            return Response({"error": f"ExportTickets xatosi: {export_response.text}"}, status=export_response.status_code)
 
         return Response({
             "message": f"Savollar yuklandi va {num_tickets} ta bilet yaratildi!",
