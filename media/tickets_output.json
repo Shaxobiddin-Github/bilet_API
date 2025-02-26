@@ -1,39 +1,39 @@
 {
     "tickets": [
         {
-            "easy": "Ko‘k – yashil suvo‘ttoifalar bo‘limining hujayra tuzilishini yozing.(Perinoid,pektin,xro matofor,fikobilisoma)",
-            "medium": "Hujayrani kimyoviy tarkibi",
-            "murakkab1": "Evglena suvo‘tlar bo’limining sistematikasi,ko’payishi(tall omining tuzilishi, ko’payish xillari)tushuntirib berin",
-            "murakkab2": "Plastida,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
-            "hard": "Xlorellaning ko’payishi va tuzilishini yozib bering"
+            "easy": "Ildizning o‘sishi va rivojlanishi qanday omillarga bog‘liq?",
+            "medium": "Sferosomalar,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "murakkab1": "Ildizning ikkilamchi tuzilishi qanday",
+            "murakkab2": "Shakli o’zgargan barglarni tushuntirib bering",
+            "hard": "Ko‘k-yashil suvo‘ttoifalarining tabiatda tarqalishini bayon qiling"
         },
         {
-            "easy": "Mitoxondrya ,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
-            "medium": "Meva va urug’larni zooxoriya tarqalishini tushuntirib bering",
-            "murakkab1": "Apomiksis va uning mohiyati",
-            "murakkab2": "Qanday to‘qimalar o‘zgaruvchan va doimiy bo‘ladi?Kollaterial boylam nima?",
-            "hard": "Kopulyatsiya qanday jarayon ekanligini tushuntiring"
-        },
-        {
-            "easy": "Meva va uni tuzilishini izohlab bering",
-            "medium": "mujotsiyaning tuzilishi va ko`payishini bayon qiling",
+            "easy": "Mikrosporogenezni aytib bering",
+            "medium": "O‘simliklarni o‘rganishda qanday usullardan foydalaniladi?",
             "murakkab1": "Meva va urug’larni ornitoxoriya tarqalishini tushuntirib bering",
-            "murakkab2": "Ho’l meva va ho’l meva tiplariga misollar keltiring",
-            "hard": "Murtak xaltasining tuzilishi va hosil bo’lishi"
+            "murakkab2": "Matseratsiya,mitsilla,intussupensiya,appozitsiya ,plazmodesma,Perforatsiya tushunchalariga tariff bering",
+            "hard": "O’tkazuvchi to’qima vauning turlariga tariff bering"
+        },
+        {
+            "easy": "Mikrosporogenezni aytib bering",
+            "medium": "Kselema nurlari qanday xillarga bo’linadi",
+            "murakkab1": "Qanaqa gulg‘o‘rg‘oni turlarini bilasiz",
+            "murakkab2": "Diktiotaning tuzilishi va ko’payishi. Nasllar gallanishini bayon qiling.",
+            "hard": "Botanika fanining o‘rganadigan predmeti nima?Turgor va plazmoliz nima?"
         },
         {
             "easy": " Ko‘k – yashil suvo‘ttoifalar bo‘limining hujayra tuzilishini yozing.(Perinoid,pektin,xro matofor,fikobilisoma)",
-            "medium": "Gulli o’simliklarda jinsiy ko’payish jarayoni qanday amalga oshadi",
-            "murakkab1": "Suv to’rchasi (Hydrodictyon) ning klassifikatsiyasi tushuntirib bering (bo’lim, ajdod, kabila, turkum va turi, tallomining tuzilishi, xujayra tuzilishi, kupayishi: jinsiy va jinsiz, senobial koloniya, poliedr).",
-            "murakkab2": "Plastida,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
-            "hard": "Xlorellaning ko’payishi va tuzilishini yozib bering"
+            "medium": "Kselema nurlari qanday xillarga bo’linadi",
+            "murakkab1": "Yer usti shakli o’zgargan novdalar",
+            "murakkab2": "Qoplovchi to‘qimalarning qanday xillari mavjud va vazifasi?",
+            "hard": "Novda sistemasining umumiy ko’rinishi "
         },
         {
-            "easy": "Stel nazariyasini yoritib bering",
-            "medium": "Barglarni tomirlanishini tushuntiring",
-            "murakkab1": "Yer usti shakli o’zgargan novdalar",
-            "murakkab2": "Bir pallali o‘tchil o‘simliklar poyasi qanday tuzilishga ega",
-            "hard": "Hujayra  tarkibida kiruvchi fitogormonlar,antibiotiklar,fitonsidlar ni aamiyatini tushunturib bering"
+            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
+            "medium": "Bir yoki ikki uyli gullar qaysi qismlardan iborat?",
+            "murakkab1": "Botanika fanining rivojlanish tarixi(Navashin,Sukachev,Vavilov,Korovin) ni yozing",
+            "murakkab2": "Sun’iy vegetativ ko‘payishni qanaqa turlari bo’ladi",
+            "hard": "Meva va urug’larni tarqalishini tushuntirib bering"
         }
     ]
 }

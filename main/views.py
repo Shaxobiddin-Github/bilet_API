@@ -1,9 +1,6 @@
 
 
-import sys
 
-if sys.platform == "win32":
-    import pythoncom  # Faqat Windows uchun
 from docx.shared import Pt  
 import os
 import json
@@ -467,7 +464,7 @@ class ExportTickets(APIView):
 
     def get(self, request):
         # COM ob'ektini boshlash
-        pythoncom.CoInitialize()
+        # pythoncom.CoInitialize()
 
         tickets_output_path = os.path.join(settings.MEDIA_ROOT, "tickets_output.json")
 
@@ -590,7 +587,7 @@ class ExportTickets(APIView):
         merger.close()
 
         # COM ob'ektini tozalash
-        pythoncom.CoUninitialize()
+        # pythoncom.CoUninitialize()
 
         return Response({
             "message": "Biletlar PDFga aylantirildi!",
