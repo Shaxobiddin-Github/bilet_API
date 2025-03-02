@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:8000 bace.wsgi:application
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles  # Static fayllar uchun volume
+      - media_volume:/app/media        # Media fayllar uchun volume
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0  # Production uchun
+
+volumes:
+  static_volume:
+  media_volume:

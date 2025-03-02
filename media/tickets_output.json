@@ -1,39 +1,11 @@
 {
     "tickets": [
         {
-            "easy": "Ildizning o‘sishi va rivojlanishi qanday omillarga bog‘liq?",
-            "medium": "Sferosomalar,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
-            "murakkab1": "Ildizning ikkilamchi tuzilishi qanday",
-            "murakkab2": "Shakli o’zgargan barglarni tushuntirib bering",
-            "hard": "Ko‘k-yashil suvo‘ttoifalarining tabiatda tarqalishini bayon qiling"
-        },
-        {
-            "easy": "Mikrosporogenezni aytib bering",
-            "medium": "O‘simliklarni o‘rganishda qanday usullardan foydalaniladi?",
-            "murakkab1": "Meva va urug’larni ornitoxoriya tarqalishini tushuntirib bering",
-            "murakkab2": "Matseratsiya,mitsilla,intussupensiya,appozitsiya ,plazmodesma,Perforatsiya tushunchalariga tariff bering",
-            "hard": "O’tkazuvchi to’qima vauning turlariga tariff bering"
-        },
-        {
-            "easy": "Mikrosporogenezni aytib bering",
-            "medium": "Kselema nurlari qanday xillarga bo’linadi",
-            "murakkab1": "Qanaqa gulg‘o‘rg‘oni turlarini bilasiz",
-            "murakkab2": "Diktiotaning tuzilishi va ko’payishi. Nasllar gallanishini bayon qiling.",
-            "hard": "Botanika fanining o‘rganadigan predmeti nima?Turgor va plazmoliz nima?"
-        },
-        {
             "easy": " Ko‘k – yashil suvo‘ttoifalar bo‘limining hujayra tuzilishini yozing.(Perinoid,pektin,xro matofor,fikobilisoma)",
-            "medium": "Kselema nurlari qanday xillarga bo’linadi",
-            "murakkab1": "Yer usti shakli o’zgargan novdalar",
-            "murakkab2": "Qoplovchi to‘qimalarning qanday xillari mavjud va vazifasi?",
-            "hard": "Novda sistemasining umumiy ko’rinishi "
-        },
-        {
-            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
-            "medium": "Bir yoki ikki uyli gullar qaysi qismlardan iborat?",
-            "murakkab1": "Botanika fanining rivojlanish tarixi(Navashin,Sukachev,Vavilov,Korovin) ni yozing",
-            "murakkab2": "Sun’iy vegetativ ko‘payishni qanaqa turlari bo’ladi",
-            "hard": "Meva va urug’larni tarqalishini tushuntirib bering"
+            "medium": "Qanday urug‘lanish qo‘sh urug‘lanish deyiladi",
+            "murakkab1": "Barglarning o’tkazuvchi to’qimalarini tushuntirib bering",
+            "murakkab2": "Profaza I va uning davrlarini tushuntiring",
+            "hard": "Qizil suvo’tlar bo’limining xarakterli xususiyatlarini yozib bering (tallomining tuzilishi, rangini belgilovchi pigmentlar tarkibi, xromatoforalari, yadrolar soni va shakli, karpogon, trixogina, anteridiy, karposporaning shakllanishi, gonimoblast iplari, sistokarpiy)."
         }
     ]
 }

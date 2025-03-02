@@ -1,10 +1,9 @@
-# serializers.py
 from rest_framework import serializers
-from .models import SamDUkf, File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
+from .models import SamDUkf, Excel_File, SamDUkfDoc, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = File
+        model = Excel_File
         fields = ['id', 'file']
 
 class UquvYiliSerializer(serializers.ModelSerializer):
@@ -45,7 +44,7 @@ class SamDUkfSerializer(serializers.ModelSerializer):
     fan_id = serializers.PrimaryKeyRelatedField(queryset=Fan.objects.all(), source='fan', write_only=True)
     bosqich_id = serializers.PrimaryKeyRelatedField(queryset=Bosqich.objects.all(), source='bosqich', write_only=True)
     talim_yunalishi_id = serializers.PrimaryKeyRelatedField(queryset=Talim_yunalishi.objects.all(), source='talim_yunalishi', write_only=True)
-    file_id = serializers.PrimaryKeyRelatedField(queryset=File.objects.all(), source='file', write_only=True)
+    file_id = serializers.PrimaryKeyRelatedField(queryset=Excel_File.objects.all(), source='file', write_only=True)
 
     class Meta:
         model = SamDUkf
@@ -69,3 +68,16 @@ class SamDUkfSerializer(serializers.ModelSerializer):
         if data.get('biletlar_soni') < 1:
             raise serializers.ValidationError({'biletlar_soni': "Biletlar soni kamida 1 bo'lishi kerak!"})
         return data
+    
+
+class SamDUkfDocSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SamDUkfDoc
+        fields = ['id', 'samdukf', 'file']  # Kerakli maydonlarni kiritamiz
+        read_only_fields = ['id']  # Faqat o'qish uchun maydon
+
+    def validate_file(self, value):
+        # File uchun qo'shimcha validatsiya (masalan, hajmi yoki turi bo'yicha)
+        if value.size > 10 * 1024 * 1024:  # 10 MB dan katta bo'lmasligi uchun
+            raise serializers.ValidationError("Fayl hajmi 10 MB dan oshmasligi kerak.")
+        return value

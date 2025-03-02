@@ -1,8 +1,9 @@
-
-
-
+import sys
+if sys.platform == "win32":
+    import pythoncom  # Faqat Windows uchun
 from docx.shared import Pt  
 import os
+import requests
 import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,24 +20,29 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import SamDUkf, File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
+from .models import SamDUkf, Excel_File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan, SamDUkfDoc
 from .serializers import (
-    SamDUkfSerializer, FileSerializer, UquvYiliSerializer, BosqichSerializer,
+    SamDUkfDocSerializer, SamDUkfSerializer, FileSerializer, UquvYiliSerializer, BosqichSerializer,
     TalimYunalishiSerializer, SemestrSerializer, FanSerializer
 )
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg import openapi
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 
+class SamDUkfDocViewSet(ModelViewSet):
+    queryset = SamDUkfDoc.objects.all()
+    serializer_class = SamDUkfDocSerializer
 
-
-
-
+    def perform_create(self, serializer):
+        # Yangi hujjat yaratilganda qo'shimcha logika qo'shish mumkin
+        serializer.save()
 
 
 class FileViewSet(ModelViewSet):
-    queryset = File.objects.all()
+    queryset = Excel_File.objects.all()
     serializer_class = FileSerializer
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]  # AllowAny o‘chirildi
@@ -64,8 +70,25 @@ class FileViewSet(ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-# O'quv yili uchun API
+    
+    def perform_create(self, serializer):
+        # Avvalgi faylni topish va o'chirish
+        latest_file = Excel_File.objects.last()
+        if latest_file and latest_file.file:
+            if os.path.isfile(latest_file.file.path):
+                print(f"Deleting old file: {latest_file.file.path}")
+                try:
+                    os.remove(latest_file.file.path)  # Faylni mediadan o'chirish
+                    print(f"Successfully deleted old file: {latest_file.file.path}")
+                except Exception as e:
+                    print(f"Failed to delete old file: {str(e)}")
+            latest_file.delete()  # Bazadan ham o'chirish
+            print(f"Deleted old record from database: {latest_file}")
 
+        # Yangi faylni saqlash
+        serializer.save()
+    
+    
 
 class UquvYiliViewSet(ModelViewSet):
     queryset = Uquv_yili.objects.all()
@@ -93,7 +116,6 @@ class UquvYiliViewSet(ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
 
 class BosqichViewSet(ModelViewSet):
     queryset = Bosqich.objects.all()
@@ -206,7 +228,7 @@ class FanViewSet(ModelViewSet):
 class SamDUkfViewSet(ModelViewSet):
     queryset = SamDUkf.objects.all()
     serializer_class = SamDUkfSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
@@ -250,25 +272,10 @@ class SamDUkfViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-
-
-import os
-import json
-import requests
-from openpyxl import load_workbook
-from django.conf import settings
-from django.urls import reverse
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import SamDUkf
-
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
 
     def post(self, request):
         
@@ -336,14 +343,11 @@ class UploadQuestions(APIView):
             return Response({"error": f"Faylni o'qishda xatolik: {str(e)}"}, status=500)
 
         # 🎟 Biletlarni yaratish uchun API'ga so‘rov yuborish
-        base_url = "https://bilet-api.onrender.com/"  # O'zingizning API manzilingizni qo'shing
+        base_url = "http://127.0.0.1:8000"  # O'zingizning API manzilingizni qo'shing
         generate_url = f"{base_url}/api/generate_tickets/"
         export_url = f"{base_url}/api/export_tickets/"
 
-        headers = {
-            "Authorization": f"Bearer {request.auth}"  # JWT tokenni qo‘shish
-        }
-
+        
         response = requests.post(
             generate_url,
             json={
@@ -354,7 +358,7 @@ class UploadQuestions(APIView):
                 "num_murakkab2": num_murakkab2,
                 "num_hard": num_hard
             },
-            headers=headers
+            
         )
 
         
@@ -362,7 +366,7 @@ class UploadQuestions(APIView):
         if response.status_code != 200:
             return Response({"error": f"GenerateTickets xatosi: {response.text}"}, status=response.status_code)
 
-        export_response = requests.get(export_url, headers=headers)
+        export_response = requests.get(export_url)
 
         if export_response.status_code != 200:
             return Response({"error": f"ExportTickets xatosi: {export_response.text}"}, status=export_response.status_code)
@@ -377,7 +381,6 @@ class UploadQuestions(APIView):
                 f"{settings.MEDIA_URL}hard_questions.json",
             ]
         })
-
 
 class GenerateTickets(APIView):
     permission_classes = [AllowAny]
@@ -458,18 +461,24 @@ class GenerateTickets(APIView):
 
 
 
+
+
+
+
+
+from django.core.files import File
+
+
 class ExportTickets(APIView):
     permission_classes = [AllowAny]
-    
 
     def get(self, request):
-        # COM ob'ektini boshlash
-        # pythoncom.CoInitialize()
+        pythoncom.CoInitialize()
 
         tickets_output_path = os.path.join(settings.MEDIA_ROOT, "tickets_output.json")
+        print(f"Checking tickets JSON at: {tickets_output_path}")
 
         try:
-            # JSON faylni o'qish
             with open(tickets_output_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
         except FileNotFoundError:
@@ -479,9 +488,9 @@ class ExportTickets(APIView):
         if not tickets:
             return Response({"error": "Biletlar topilmadi!"}, status=400)
 
-        # Foydalanuvchi tomonidan kiritilgan ma'lumotlarni olish
         try:
-            samdukf_instance = SamDUkf.objects.latest('id')  # Oxirgi saqlangan ma'lumotni olish
+            samdukf_instance = SamDUkf.objects.latest('id')
+            print(f"Using SamDUkf instance: {samdukf_instance}")
         except SamDUkf.DoesNotExist:
             return Response({"error": "SamDUkf ma'lumotlari topilmadi!"}, status=404)
 
@@ -491,45 +500,31 @@ class ExportTickets(APIView):
         stage = samdukf_instance.bosqich
         field_of_study = samdukf_instance.talim_yunalishi
 
-        # Static papkadagi Word shablon fayli yo'li
         template_path = os.path.join(os.path.dirname(__file__), '../static/bilet_savollar.docx')
-
-        # Fayl mavjudligini tekshirish
         if not os.path.exists(template_path):
             return Response({"error": f"Word shablon fayli topilmadi! Yo'l: {template_path}"}, status=404)
 
-        # Fayllarni saqlash uchun katalog
-        output_dir = r"D:\Snayder\bilet_API\media"
-        os.makedirs(output_dir, exist_ok=True)  # Agar katalog mavjud bo'lmasa, uni yaratamiz
+        output_dir = os.path.join(settings.MEDIA_ROOT, "biletlar")
+        os.makedirs(output_dir, exist_ok=True)
 
         word_files = []
-
-        # Har bir biletni qayta ishlash
         for ticket_num, ticket in enumerate(tickets, start=1):
-            # Word faylni yaratish
             doc = Document(template_path)
-
-            # Jadvalni tekshirish
             if not doc.tables:
                 return Response({"error": "Word shablonida jadval mavjud emas!"}, status=500)
-            
-            table2 = doc.tables[0]  # Birinchi jadval
 
-            # ** Matnni o'rnatish va formatlash **
-            cell_1 = table2.rows[0].cells[0]  # Katakni olish
+            table2 = doc.tables[0]
+            cell_1 = table2.rows[0].cells[0]
             cell_1.text = f"{academic_year}-O‘quv yili {stage}-bosqich {semester}-semestr"
-
-            # Matnni qalin va kattaroq qilish
             paragraph1 = cell_1.paragraphs[0]
             run = paragraph1.runs[0]
-            paragraph1.alignment = 1  # 0 = chap, 1 = markaz, 2 = o'ng
+            paragraph1.alignment = 1
             run.bold = True
-            run.font.name = "Times New Roman"  # Shriftni Times New Roman qilish
-            run.font.size = Pt(20)  # 16 pt kattalik
+            run.font.name = "Times New Roman"
+            run.font.size = Pt(20)
 
             cell_2 = table2.rows[1].cells[0]
             cell_2.text = f"{field_of_study} yo‘nalishiga"
-            # Matnni markazga joylashtirish
             paragraph2 = cell_2.paragraphs[0]
             run = paragraph2.runs[0]
             paragraph2.alignment = 1
@@ -546,50 +541,89 @@ class ExportTickets(APIView):
             run.font.name = "Times New Roman"
             run.font.size = Pt(20)
 
-
-            table = doc.tables[-2]  # Oxiridan ikkinchi jadvalni olish
-
-# Savollarni jadvalga yozish
+            table = doc.tables[-2]
             questions = list(ticket.values())
-
             for i, question in enumerate(questions):
-                if i < len(table.rows):  # Jadvalning mos qatori mavjudligini tekshirish
-                    cell = table.rows[i].cells[1]  # 2-ustun (index 1)
-                    
-                    # Avvalgi matnni o‘chirish va yangi matn qo‘shish
-                    cell.text = ""  
+                if i < len(table.rows):
+                    cell = table.rows[i].cells[1]
+                    cell.text = ""
                     p = cell.paragraphs[0]
-                    run = p.add_run(question)  # Savolni qo‘shish
-                    
-                    # Matn o‘lchamini kattalashtirish va o‘rtaga joylash
+                    run = p.add_run(question)
                     run.font.size = Pt(14)
-                    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  
+                    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
-
-            # Fayl nomini dinamik ravishda yaratish
             output_file = os.path.join(output_dir, f"bilet_{ticket_num}.docx")
             doc.save(output_file)
             word_files.append(output_file)
 
-        # Word fayllarni PDFga aylantirish
         pdf_files = []
         for word_file in word_files:
             pdf_file = word_file.replace(".docx", ".pdf")
-            convert(word_file)  # Word -> PDF konvertatsiyasi
+            convert(word_file)
             pdf_files.append(pdf_file)
 
-        # PDF fayllarni birlashtirish
-        merged_pdf = os.path.join(output_dir, "merged_tickets.pdf")
+        # Statik fayl nomi bilan merged PDF yaratish
+        merged_pdf_path = os.path.join(output_dir, f"merged_tickets_{samdukf_instance.id}.pdf")
         merger = PdfMerger()
         for pdf in pdf_files:
             merger.append(pdf)
-        merger.write(merged_pdf)
+        merger.write(merged_pdf_path)
         merger.close()
+        print(f"Generated merged PDF at: {merged_pdf_path}")
 
-        # COM ob'ektini tozalash
-        # pythoncom.CoUninitialize()
+        # Eski faylni ID orqali topib o'chirish
+        try:
+            # Avvalgi ID li faylni topish
+            old_samdukf_doc = SamDUkfDoc.objects.filter(samdukf__id__lt=samdukf_instance.id).last()
+            if old_samdukf_doc and old_samdukf_doc.file:
+                if os.path.isfile(old_samdukf_doc.file.path):
+                    print(f"Deleting old file: {old_samdukf_doc.file.path}")
+                    os.remove(old_samdukf_doc.file.path)
+                old_samdukf_doc.delete()  # Bazadan ham o'chirish
+                print(f"Deleted old record from database: {old_samdukf_doc}")
+        except Exception as e:
+            print(f"Error deleting old file/record: {str(e)}")
+
+        # Yangi faylni saqlash (eski fayl qayta yoziladi)
+        try:
+            samdukf_doc, created = SamDUkfDoc.objects.get_or_create(samdukf=samdukf_instance)
+            with open(merged_pdf_path, 'rb') as pdf_file:
+                # Faylni qayta yozish uchun to'g'ridan-to'g'ri save ishlatamiz
+                samdukf_doc.file.save(f"merged_tickets_{samdukf_instance.id}.pdf", File(pdf_file), save=True)
+                print(f"Saved new file (overwritten): {samdukf_doc.file.path}")
+        except Exception as e:
+            print(f"Error saving new file: {str(e)}")
+            return Response({"error": f"PDF faylni saqlashda xatolik: {str(e)}"}, status=500)
+
+        # Vaqtinchalik fayllarni o'chirish
+        for pdf in pdf_files:
+            if os.path.exists(pdf):
+                try:
+                    os.remove(pdf)
+                    print(f"Cleaned up temporary PDF: {pdf}")
+                except Exception as e:
+                    print(f"Failed to clean up temporary PDF: {str(e)}")
+
+        for word in word_files:
+            if os.path.exists(word):
+                try:
+                    os.remove(word)
+                    print(f"Cleaned up temporary Word file: {word}")
+                except Exception as e:
+                    print(f"Failed to clean up temporary Word file: {str(e)}")
+
+        # Agar merged_pdf_path qolsa, uni o'chirish
+        if os.path.exists(merged_pdf_path):
+            try:
+                os.remove(merged_pdf_path)
+                print(f"Cleaned up intermediate PDF: {merged_pdf_path}")
+            except Exception as e:
+                print(f"Failed to clean up intermediate PDF: {str(e)}")
+
+        pythoncom.CoUninitialize()
 
         return Response({
-            "message": "Biletlar PDFga aylantirildi!",
-            "merged_pdf": f"{merged_pdf}"
+            "message": "Biletlar PDFga aylantirildi va saqlandi!",
+            "merged_pdf": f"{settings.MEDIA_URL}biletlar/merged_tickets_{samdukf_instance.id}.pdf"
         })
+    

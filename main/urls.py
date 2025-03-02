@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import UploadQuestions, GenerateTickets, ExportTickets
+from .views import SamDUkfDocViewSet, UploadQuestions, GenerateTickets, ExportTickets
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from .views import (
@@ -14,9 +14,9 @@ router.register(r'talim-yunalishi', TalimYunalishiViewSet)
 router.register(r'semestr', SemestrViewSet)
 router.register(r'fan', FanViewSet)
 router.register(r'samdukf', SamDUkfViewSet)
+router.register(r'samdukfdoc', SamDUkfDocViewSet)
 
 
-# samdukf_list = SamDUkfViewSet.as_view({'get': 'list', 'post': 'create'})
 app_name = "api"
 
 urlpatterns = [

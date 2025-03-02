@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SamDUkf, File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan
+from .models import SamDUkf, Excel_File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan, SamDUkfDoc
 
 @admin.register(SamDUkf)
 class SamDUkfAdmin(admin.ModelAdmin):
@@ -7,7 +7,7 @@ class SamDUkfAdmin(admin.ModelAdmin):
     search_fields = ('fan__fan', 'uquv_yili__uquv_yili', 'talim_yunalishi__talim_yunalishi')
     list_filter = ('uquv_yili', 'semestr', 'bosqich', 'talim_yunalishi')
 
-@admin.register(File)
+@admin.register(Excel_File)
 class FileAdmin(admin.ModelAdmin):
     list_display = ('id', 'file')
     search_fields = ('file',)
@@ -36,3 +36,8 @@ class SemestrAdmin(admin.ModelAdmin):
 class FanAdmin(admin.ModelAdmin):
     list_display = ('id', 'fan')
     search_fields = ('fan',)
+
+@admin.register(SamDUkfDoc)
+class SamDUkfDocAdmin(admin.ModelAdmin):
+    list_display = ('id', 'file')
+    search_fields = ('file',)
