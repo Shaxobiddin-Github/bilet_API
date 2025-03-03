@@ -1,11 +1,18 @@
 {
     "tickets": [
         {
-            "easy": " Ko‘k – yashil suvo‘ttoifalar bo‘limining hujayra tuzilishini yozing.(Perinoid,pektin,xro matofor,fikobilisoma)",
-            "medium": "Qanday urug‘lanish qo‘sh urug‘lanish deyiladi",
-            "murakkab1": "Barglarning o’tkazuvchi to’qimalarini tushuntirib bering",
-            "murakkab2": "Profaza I va uning davrlarini tushuntiring",
-            "hard": "Qizil suvo’tlar bo’limining xarakterli xususiyatlarini yozib bering (tallomining tuzilishi, rangini belgilovchi pigmentlar tarkibi, xromatoforalari, yadrolar soni va shakli, karpogon, trixogina, anteridiy, karposporaning shakllanishi, gonimoblast iplari, sistokarpiy)."
+            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
+            "medium": "Hujayra shirasi va uning tarkibini tushuntirib bering",
+            "murakkab1": "Hujayra kashf ettilishining tarixi ni yozing",
+            "murakkab2": "O‘simliklarning vegetativ ko‘payishi deb nimaga aytiladi",
+            "hard": "Ildizning morfologik tuzilishi, kelib chiqishiga ko‘ra tiplari va ildiz sistemasini tushuntirib bering."
+        },
+        {
+            "easy": "Yon kurtaklarning qanday xillari bor?",
+            "medium": "Ildizning morfologik tuzilishi, kelib chiqishiga ko‘ra tiplari va ildiz sistemasini tushuntirib bering.",
+            "murakkab1": "Kladoforani tuzilishini ko’payishini tushuntirib bering",
+            "murakkab2": "Botanika fanining rivojlanish tarixi( Beruniy,M.Koshg’ariy,Z.M Bobur,Sezalpin)ni yozing",
+            "hard": "Tabiiy vegetativ ko‘payishning qanaqa turlari bo’ladi?"
         }
     ]
 }

@@ -3,11 +3,11 @@ from .views import SamDUkfDocViewSet, UploadQuestions, GenerateTickets, ExportTi
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from .views import (
-    FileViewSet, UquvYiliViewSet, BosqichViewSet, TalimYunalishiViewSet,
+     UquvYiliViewSet, BosqichViewSet, TalimYunalishiViewSet,
     SemestrViewSet, FanViewSet, SamDUkfViewSet
 )
 router = DefaultRouter()
-router.register(r'files', FileViewSet)
+
 router.register(r'uquv-yili', UquvYiliViewSet)
 router.register(r'bosqich', BosqichViewSet)
 router.register(r'talim-yunalishi', TalimYunalishiViewSet)

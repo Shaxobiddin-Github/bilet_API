@@ -3,6 +3,8 @@ import os
 
 
 
+
+
 class SamDUkf(models.Model):
     """
     Ushbu model akademik yil, semestr, fan, bosqich va mutaxassislik bo'yicha
@@ -13,47 +15,30 @@ class SamDUkf(models.Model):
     fan = models.ForeignKey("Fan", on_delete=models.CASCADE)
     bosqich = models.ForeignKey("Bosqich", on_delete=models.CASCADE)
     talim_yunalishi = models.ForeignKey("Talim_yunalishi", on_delete=models.CASCADE)
-    file = models.ForeignKey("Excel_File", on_delete=models.SET_NULL, null=True, blank=True)
+    file = models.FileField(upload_to='documents/', null=True, blank=True, help_text="Yuklangan fayl")
     biletlar_soni = models.IntegerField(default=1, help_text="nechta bilet kerakligini kiriting?")
     oson_savol = models.IntegerField(default=1, help_text="oson savollar")
     urtacha_savol = models.IntegerField(default=1, help_text="urtacha darajali savollar")
     murakkab1 = models.IntegerField(default=1, help_text="murakkab1 darajaga mansub savollar")
     murakkab2 = models.IntegerField(default=1, help_text="murakkab2 darajaga mansub savollar")
-    qiyin_savol = models.IntegerField(default=1, help_text = "eng qiyin savollar tuplami")
-
-    
-
-    def __str__(self):
-        return f"{self.fan} ({self.uquv_yili})"
-
-
-
-
-import os
-from django.db import models
-
-class Excel_File(models.Model):
-    """
-    Ushbu model hujjatlarni saqlash uchun ishlatiladi.
-    """
-    file = models.FileField(upload_to='documents/', help_text="Yuklangan fayl")
+    qiyin_savol = models.IntegerField(default=1, help_text="eng qiyin savollar tuplami")
 
     def save(self, *args, **kwargs):
-        # Eski faylni topish va o'chirish
-        if self.pk:  # Agar bu obyekt allaqachon bazada mavjud bo'lsa
+        # Agar obyekt allaqachon bazada mavjud bo'lsa va fayl o'zgartirilgan bo'lsa
+        if self.pk:
             try:
-                old_instance = Excel_File.objects.get(pk=self.pk)
-                if old_instance.file and os.path.isfile(old_instance.file.path):
+                old_instance = SamDUkf.objects.get(pk=self.pk)  # Eski obyektni ID orqali topish
+                if old_instance.file and old_instance.file != self.file and os.path.isfile(old_instance.file.path):
                     print(f"Attempting to delete old file: {old_instance.file.path}")
                     try:
-                        os.remove(old_instance.file.path)  # Faylni mediadan o'chirish
+                        os.remove(old_instance.file.path)  # Eski faylni mediadan o'chirish
                         print(f"Successfully deleted old file: {old_instance.file.path}")
                     except Exception as e:
                         print(f"Failed to delete old file: {str(e)}")
-            except Excel_File.DoesNotExist:
+            except SamDUkf.DoesNotExist:
                 pass
 
-        # Yangi faylni saqlash
+        # Faylni saqlash
         super().save(*args, **kwargs)
 
         if self.file:
@@ -75,8 +60,9 @@ class Excel_File(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return f"Fayl: {self.file.name}"
-    
+        return f"{self.fan} ({self.uquv_yili})"
+
+
 
 
 
@@ -137,7 +123,7 @@ def get_upload_path(instance, filename):
 
 
 class SamDUkfDoc(models.Model):
-    samdukf = models.OneToOneField('SamDUkf', on_delete=models.SET_NULL, null=True, blank=True)
+    samdukf = models.OneToOneField('SamDUkf', on_delete=models.SET_NULL, null=True, blank=True, related_name='samdukfdoc')
     file = models.FileField(upload_to=get_upload_path, help_text="tayyor biletlar")
 
     def save(self, *args, **kwargs):

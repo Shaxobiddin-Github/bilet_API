@@ -20,9 +20,9 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import SamDUkf, Excel_File, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan, SamDUkfDoc
+from .models import SamDUkf, Uquv_yili, Bosqich, Talim_yunalishi, Semestr, Fan, SamDUkfDoc
 from .serializers import (
-    SamDUkfDocSerializer, SamDUkfSerializer, FileSerializer, UquvYiliSerializer, BosqichSerializer,
+    SamDUkfDocSerializer, SamDUkfSerializer,  UquvYiliSerializer, BosqichSerializer,
     TalimYunalishiSerializer, SemestrSerializer, FanSerializer
 )
 from rest_framework.viewsets import ModelViewSet
@@ -30,7 +30,7 @@ from rest_framework.permissions import IsAuthenticated
 from drf_yasg import openapi
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-
+from rest_framework import status
 
 class SamDUkfDocViewSet(ModelViewSet):
     queryset = SamDUkfDoc.objects.all()
@@ -41,52 +41,7 @@ class SamDUkfDocViewSet(ModelViewSet):
         serializer.save()
 
 
-class FileViewSet(ModelViewSet):
-    queryset = Excel_File.objects.all()
-    serializer_class = FileSerializer
-    parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [IsAuthenticated]  # AllowAny o‘chirildi
 
-    @swagger_auto_schema(
-        operation_description="Fayl yuklash",
-        manual_parameters=[
-            openapi.Parameter('file', openapi.IN_FORM, type=openapi.TYPE_FILE, description='Yuklanadigan fayl', required=True),
-        ],
-        responses={
-            201: FileSerializer,
-            400: "Fayl yuklanmadi",
-            401: "Autentifikatsiya talab qilinadi"
-        }
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Fayllar ro'yxatini olish",
-        responses={
-            200: FileSerializer(many=True),
-            401: "Autentifikatsiya talab qilinadi"
-        }
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-    
-    def perform_create(self, serializer):
-        # Avvalgi faylni topish va o'chirish
-        latest_file = Excel_File.objects.last()
-        if latest_file and latest_file.file:
-            if os.path.isfile(latest_file.file.path):
-                print(f"Deleting old file: {latest_file.file.path}")
-                try:
-                    os.remove(latest_file.file.path)  # Faylni mediadan o'chirish
-                    print(f"Successfully deleted old file: {latest_file.file.path}")
-                except Exception as e:
-                    print(f"Failed to delete old file: {str(e)}")
-            latest_file.delete()  # Bazadan ham o'chirish
-            print(f"Deleted old record from database: {latest_file}")
-
-        # Yangi faylni saqlash
-        serializer.save()
     
     
 
@@ -234,18 +189,54 @@ class SamDUkfViewSet(ModelViewSet):
     @swagger_auto_schema(
         operation_description="Yangi SamDUkf yozuvi qo'shish",
         manual_parameters=[
-            openapi.Parameter('uquv_yili_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='O‘quv yili ID', required=True),
-            openapi.Parameter('semestr_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Semestr ID', required=True),
-            openapi.Parameter('fan_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Fan ID', required=True),
-            openapi.Parameter('bosqich_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Bosqich ID', required=True),
-            openapi.Parameter('talim_yunalishi_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Ta‘lim yo‘nalishi ID', required=True),
-            openapi.Parameter('file_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Fayl ID', required=True),
-            openapi.Parameter('biletlar_soni', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Biletlar soni'),
-            openapi.Parameter('oson_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Oson savollar soni (1-5)'),
-            openapi.Parameter('urtacha_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='O‘rtacha savollar soni (1-5)'),
-            openapi.Parameter('murakkab1', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Murakkab1 savollar soni (1-5)'),
-            openapi.Parameter('murakkab2', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Murakkab2 savollar soni (1-5)'),
-            openapi.Parameter('qiyin_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description='Qiyin savollar soni (1-5)'),
+            openapi.Parameter(
+                'uquv_yili_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='O‘quv yili ID', required=True
+            ),
+            openapi.Parameter(
+                'semestr_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Semestr ID', required=True
+            ),
+            openapi.Parameter(
+                'fan_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Fan ID', required=True
+            ),
+            openapi.Parameter(
+                'bosqich_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Bosqich ID', required=True
+            ),
+            openapi.Parameter(
+                'talim_yunalishi_id', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Ta‘lim yo‘nalishi ID', required=True
+            ),
+            openapi.Parameter(
+                'file', openapi.IN_FORM, type=openapi.TYPE_FILE,
+                description='Fayl (PDF, Excel yoki boshqa format)', required=False
+            ),
+            openapi.Parameter(
+                'biletlar_soni', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Biletlar soni', required=False
+            ),
+            openapi.Parameter(
+                'oson_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Oson savollar soni (1-5)', required=False
+            ),
+            openapi.Parameter(
+                'urtacha_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='O‘rtacha savollar soni (1-5)', required=False
+            ),
+            openapi.Parameter(
+                'murakkab1', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Murakkab1 savollar soni (1-5)', required=False
+            ),
+            openapi.Parameter(
+                'murakkab2', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Murakkab2 savollar soni (1-5)', required=False
+            ),
+            openapi.Parameter(
+                'qiyin_savol', openapi.IN_FORM, type=openapi.TYPE_INTEGER,
+                description='Qiyin savollar soni (1-5)', required=False
+            ),
         ],
         responses={
             201: SamDUkfSerializer,
@@ -254,12 +245,20 @@ class SamDUkfViewSet(ModelViewSet):
         }
     )
     def create(self, request, *args, **kwargs):
+        """
+        Yangi SamDUkf yozuvini yaratish.
+        """
+        # Serializer orqali validatsiya va ma'lumotlarni saqlash
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        return Response(serializer.data, status=201)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
+        """
+        Faylni saqlash va bog'liq modellarni yaratish.
+        """
         serializer.save()
 
     @swagger_auto_schema(
@@ -270,7 +269,11 @@ class SamDUkfViewSet(ModelViewSet):
         }
     )
     def list(self, request, *args, **kwargs):
+        """
+        Barcha SamDUkf yozuvlarini ro'yxatini olish.
+        """
         return super().list(request, *args, **kwargs)
+    
 
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
