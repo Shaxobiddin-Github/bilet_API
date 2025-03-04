@@ -31,6 +31,8 @@ from drf_yasg import openapi
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from rest_framework import status
+from django.core.files import File
+
 
 class SamDUkfDocViewSet(ModelViewSet):
     queryset = SamDUkfDoc.objects.all()
@@ -38,12 +40,7 @@ class SamDUkfDocViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         # Yangi hujjat yaratilganda qo'shimcha logika qo'shish mumkin
-        serializer.save()
-
-
-
-    
-    
+        serializer.save() 
 
 class UquvYiliViewSet(ModelViewSet):
     queryset = Uquv_yili.objects.all()
@@ -247,10 +244,37 @@ class SamDUkfViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         """
         Yangi SamDUkf yozuvini yaratish.
+        Agar berilgan ma'lumotlar bazada allaqachon mavjud bo'lsa,
+        eski yozuvni ID orqali aniqlab olib o'chirib tashlaydi.
+        Shuningdek, SamDUkfDoc modelidagi bog'liq yozuvlarni ham o'chiradi.
         """
-        # Serializer orqali validatsiya va ma'lumotlarni saqlash
+        # Kirish ma'lumotlarini validatsiya qilish
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        # Bazada allaqachon mavjud bo'lgan yozuvni topish
+        uquv_yili_id = request.data.get('uquv_yili_id')
+        semestr_id = request.data.get('semestr_id')
+        fan_id = request.data.get('fan_id')
+        bosqich_id = request.data.get('bosqich_id')
+        talim_yunalishi_id = request.data.get('talim_yunalishi_id')
+
+        existing_record = SamDUkf.objects.filter(
+            uquv_yili_id=uquv_yili_id,
+            semestr_id=semestr_id,
+            fan_id=fan_id,
+            bosqich_id=bosqich_id,
+            talim_yunalishi_id=talim_yunalishi_id
+        ).first()
+
+        if existing_record:
+            # Eski yozuvni o'chirish
+            if hasattr(existing_record, 'samdukfdoc'):
+                # SamDUkfDoc modelidagi bog'liq yozuvni o'chirish
+                existing_record.samdukfdoc.delete()
+            existing_record.delete()
+
+        # Yangi yozuvni saqlash
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -260,20 +284,6 @@ class SamDUkfViewSet(ModelViewSet):
         Faylni saqlash va bog'liq modellarni yaratish.
         """
         serializer.save()
-
-    @swagger_auto_schema(
-        operation_description="SamDUkf yozuvlari ro'yxatini olish",
-        responses={
-            200: SamDUkfSerializer(many=True),
-            401: "Autentifikatsiya talab qilinadi"
-        }
-    )
-    def list(self, request, *args, **kwargs):
-        """
-        Barcha SamDUkf yozuvlarini ro'yxatini olish.
-        """
-        return super().list(request, *args, **kwargs)
-    
 
 class UploadQuestions(APIView):
     parser_classes = [MultiPartParser]
@@ -469,14 +479,17 @@ class GenerateTickets(APIView):
 
 
 
-from django.core.files import File
+from datetime import datetime
 
 
 class ExportTickets(APIView):
     permission_classes = [AllowAny]
+    
 
     def get(self, request):
         pythoncom.CoInitialize()
+        bugun = datetime.now()
+        formatlangan_sana = bugun.strftime("%Y_%m_%d")
 
         tickets_output_path = os.path.join(settings.MEDIA_ROOT, "tickets_output.json")
         print(f"Checking tickets JSON at: {tickets_output_path}")
@@ -502,6 +515,7 @@ class ExportTickets(APIView):
         subject = samdukf_instance.fan
         stage = samdukf_instance.bosqich
         field_of_study = samdukf_instance.talim_yunalishi
+        # talabalar_soni = samdukf_instance.biletlar_soni
 
         template_path = os.path.join(os.path.dirname(__file__), '../static/bilet_savollar.docx')
         if not os.path.exists(template_path):
@@ -566,7 +580,7 @@ class ExportTickets(APIView):
             pdf_files.append(pdf_file)
 
         # Statik fayl nomi bilan merged PDF yaratish
-        merged_pdf_path = os.path.join(output_dir, f"merged_tickets_{samdukf_instance.id}.pdf")
+        merged_pdf_path = os.path.join(output_dir, f"{formatlangan_sana}_sanada_{samdukf_instance.biletlar_soni}_ta talabaga_muljallangan_biletlar.pdf")
         merger = PdfMerger()
         for pdf in pdf_files:
             merger.append(pdf)
@@ -592,7 +606,7 @@ class ExportTickets(APIView):
             samdukf_doc, created = SamDUkfDoc.objects.get_or_create(samdukf=samdukf_instance)
             with open(merged_pdf_path, 'rb') as pdf_file:
                 # Faylni qayta yozish uchun to'g'ridan-to'g'ri save ishlatamiz
-                samdukf_doc.file.save(f"merged_tickets_{samdukf_instance.id}.pdf", File(pdf_file), save=True)
+                samdukf_doc.file.save(f"{formatlangan_sana}_sanada_{samdukf_instance.biletlar_soni}_ta talabaga_muljallangan_biletlar.pdf", File(pdf_file), save=True)
                 print(f"Saved new file (overwritten): {samdukf_doc.file.path}")
         except Exception as e:
             print(f"Error saving new file: {str(e)}")

@@ -1,18 +1,11 @@
 {
     "tickets": [
         {
-            "easy": "Gulli o’simliklar urug’larining tuzilishi va turlari",
-            "medium": "Hujayra shirasi va uning tarkibini tushuntirib bering",
-            "murakkab1": "Hujayra kashf ettilishining tarixi ni yozing",
-            "murakkab2": "O‘simliklarning vegetativ ko‘payishi deb nimaga aytiladi",
-            "hard": "Ildizning morfologik tuzilishi, kelib chiqishiga ko‘ra tiplari va ildiz sistemasini tushuntirib bering."
-        },
-        {
             "easy": "Yon kurtaklarning qanday xillari bor?",
-            "medium": "Ildizning morfologik tuzilishi, kelib chiqishiga ko‘ra tiplari va ildiz sistemasini tushuntirib bering.",
-            "murakkab1": "Kladoforani tuzilishini ko’payishini tushuntirib bering",
-            "murakkab2": "Botanika fanining rivojlanish tarixi( Beruniy,M.Koshg’ariy,Z.M Bobur,Sezalpin)ni yozing",
-            "hard": "Tabiiy vegetativ ko‘payishning qanaqa turlari bo’ladi?"
+            "medium": "Megasporogenezni tushuntiring",
+            "murakkab1": "Mitoxondrya ,uning tuzilishi ,turlari va vazifasini tushuntirib bering",
+            "murakkab2": "Kladoforani tuzilishini ko’payishini tushuntirib bering",
+            "hard": "Pirofit suvo’tlar bo’limini ko‘payish xususiyatlarini va sistematikasini tushuntirib bering"
         }
     ]
 }

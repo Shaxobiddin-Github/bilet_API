@@ -23,41 +23,6 @@ class SamDUkf(models.Model):
     murakkab2 = models.IntegerField(default=1, help_text="murakkab2 darajaga mansub savollar")
     qiyin_savol = models.IntegerField(default=1, help_text="eng qiyin savollar tuplami")
 
-    def save(self, *args, **kwargs):
-        # Agar obyekt allaqachon bazada mavjud bo'lsa va fayl o'zgartirilgan bo'lsa
-        if self.pk:
-            try:
-                old_instance = SamDUkf.objects.get(pk=self.pk)  # Eski obyektni ID orqali topish
-                if old_instance.file and old_instance.file != self.file and os.path.isfile(old_instance.file.path):
-                    print(f"Attempting to delete old file: {old_instance.file.path}")
-                    try:
-                        os.remove(old_instance.file.path)  # Eski faylni mediadan o'chirish
-                        print(f"Successfully deleted old file: {old_instance.file.path}")
-                    except Exception as e:
-                        print(f"Failed to delete old file: {str(e)}")
-            except SamDUkf.DoesNotExist:
-                pass
-
-        # Faylni saqlash
-        super().save(*args, **kwargs)
-
-        if self.file:
-            print(f"Saved (overwritten) file: {self.file.path}")
-        else:
-            print("No file associated with this instance after save.")
-
-    def delete(self, *args, **kwargs):
-        # Faylni mediadan o'chirish
-        if self.file and os.path.isfile(self.file.path):
-            print(f"Deleting file from filesystem: {self.file.path}")
-            try:
-                os.remove(self.file.path)
-                print(f"Successfully deleted file: {self.file.path}")
-            except Exception as e:
-                print(f"Failed to delete file: {str(e)}")
-
-        # Bazadan o'chirish
-        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.fan} ({self.uquv_yili})"
@@ -120,11 +85,9 @@ def get_upload_path(instance, filename):
     # Har bir samdukf uchun statik fayl nomi
     return os.path.join('biletlar', f"merged_tickets_{instance.samdukf.id}.pdf")
 
-
-
 class SamDUkfDoc(models.Model):
     samdukf = models.OneToOneField('SamDUkf', on_delete=models.SET_NULL, null=True, blank=True, related_name='samdukfdoc')
-    file = models.FileField(upload_to=get_upload_path, help_text="tayyor biletlar")
+    file = models.FileField(upload_to='documents/', help_text="tayyor biletlar")
 
     def save(self, *args, **kwargs):
         # Eski faylni topish va o'chirish
